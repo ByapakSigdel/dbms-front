@@ -50,7 +50,7 @@ function AddBook(props) {
               body: JSON.stringify(data),
             });
           }
-          window.location.href = "http://localhost:3000/library";
+          window.location.href = "https://byapak-dbms.vercel.app/library";
         } catch (err) {
           console.log(err);
         }
