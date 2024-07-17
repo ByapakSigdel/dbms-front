@@ -26,15 +26,15 @@ function AddBook(props) {
       var editionNo = parseFloat(edition);
       var feedback_div = document.getElementById("feedback");
       feedback_div.innerHTML = "";
-      if (bname === "" || author === "" || isNaN(editionNo)) {
+      if (bname === "" || author === "" || editionNo === "") {
         var error =
-          "<p class='alert alert-danger'>Please enter all the required values and ensure Edition is a valid number.</p>";
+          "<p class='alert alert-danger'>Please enter the missing values</p>";
       } else {
-        const data = { bname: bname, author: author, edition: editionNo };
-        var error = "";
-        try {
+        if (isInteger(editionNo)) {
+          var error = "";
+          const data = { bname: bname, author: author, edition: editionNo };
           if (slug === "add") {
-            await fetch("https://dbms-project-dqg2.onrender.com/api/library/add", {
+            await fetch("/api/library/add", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -42,7 +42,7 @@ function AddBook(props) {
               body: JSON.stringify(data),
             });
           } else {
-            await fetch(`https://dbms-project-dqg2.onrender.com/api/library/${slug}`, {
+            await fetch(`/api/library/${slug}`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -50,31 +50,26 @@ function AddBook(props) {
               body: JSON.stringify(data),
             });
           }
-          window.location.href = "https://byapak-dbms.vercel.app/library";
-        } catch (err) {
-          console.log(err);
+          window.location.href = "/library";
+        } else {
+          var error =
+            "<p class='alert alert-danger' >Enter integer for edition</p>";
         }
       }
-  
+
       feedback_div.innerHTML = error;
     } catch (err) {
       console.log(err);
     }
   };
-  
 
   async function getBook(bookid) {
-    try {
-      const doc = await fetch(`https://dbms-project-dqg2.onrender.com/api/library/book/${bookid}`);
-      const { bname, author, edition } = await doc.json();
-      setBname(bname);
-      setAuthor(author);
-      setEdition(edition);
-    } catch (err) {
-      console.log(err);
-    }
+    const doc = await fetch(`/api/library/book/${bookid}`);
+    const { bname, author, edition } = await doc.json();
+    setBname(bname);
+    setAuthor(author);
+    setEdition(edition);
   }
-  
 
   useEffect(() => {
     const slug = window.location.href.slice(30).toUpperCase();
